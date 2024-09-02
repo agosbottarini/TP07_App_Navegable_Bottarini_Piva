@@ -1,18 +1,36 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 
-const Login = ({ route, navigation }) => {
-  const { nombre: regNombre, apellido: regApellido, usuario: regUsuario, contraseña: regContraseña } = route.params || {};
-
+const Login = ({ navigation }) => {
   const [usuario, setUsuario] = useState('');
   const [contraseña, setContraseña] = useState('');
   const [error, setError] = useState('');
 
-  const handleLogin = () => {
-    if (usuario === regUsuario && contraseña === regContraseña) {
-      navigation.navigate('Inicio', { nombre: regNombre, apellido: regApellido });
-    } else {
-      setError('Usuario o contraseña incorrectos');
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/user/login', { 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: usuario,
+          password: contraseña,
+        }),
+      });
+
+      if (response.status === 200) {
+        const data = await response.json();
+        const { token } = data;
+
+
+        navigation.navigate('Inicio', { nombre: usuario });
+      } else {
+        setError('Usuario o contraseña incorrectos');
+      }
+    } catch (error) {
+      console.error('Error en el login:', error);
+      setError('Ocurrió un error al iniciar sesión.');
     }
   };
 
@@ -33,7 +51,7 @@ const Login = ({ route, navigation }) => {
         style={styles.input}
       />
       {error ? <Text style={styles.error}>{error}</Text> : null}
-      <Button style={styles.boton} title="Iniciar sesión" onPress={handleLogin} />
+      <Button title="Iniciar sesión" onPress={handleLogin} />
       <Button title="Registrarse" onPress={() => navigation.navigate('Registro')} />
     </View>
   );
@@ -61,13 +79,6 @@ const styles = StyleSheet.create({
     color: 'red',
     marginBottom: 20,
     textAlign: 'center',
-  },
-  boton: {
-    width: '70%',
-    display: 'flex',
-    justifyContent: 'center',
-    
-
   },
 });
 

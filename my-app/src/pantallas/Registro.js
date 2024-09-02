@@ -1,6 +1,5 @@
-// Registro.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 
 const Registro = ({ navigation }) => {
   const [nombre, setNombre] = useState('');
@@ -8,11 +7,34 @@ const Registro = ({ navigation }) => {
   const [usuario, setUsuario] = useState('');
   const [contraseña, setContraseña] = useState('');
 
-  const handleRegistro = () => {
+  const handleRegistro = async () => {
     if (nombre && apellido && usuario && contraseña) {
-      navigation.navigate('Login', { nombre, apellido, usuario, contraseña });
+      try {
+        const response = await fetch('http://localhost:3000/api/user/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            first_name: nombre,
+            last_name: apellido,
+            username: usuario,
+            password: contraseña,
+          }),
+        });
+
+        if (response.status === 201) {
+          Alert.alert('Registro exitoso', 'Ahora puedes iniciar sesión');
+          navigation.navigate('Login');
+        } else {
+          Alert.alert('Error', 'No se pudo completar el registro. Inténtalo nuevamente.');
+        }
+      } catch (error) {
+        console.error('Error en el registro:', error);
+        Alert.alert('Error', 'Ocurrió un error al registrar el usuario.');
+      }
     } else {
-      alert('Por favor, completa todos los campos');
+      Alert.alert('Campos incompletos', 'Por favor, completa todos los campos');
     }
   };
 
@@ -32,7 +54,7 @@ const Registro = ({ navigation }) => {
         style={styles.input}
       />
       <TextInput
-        placeholder="Usuario"
+        placeholder="Usuario (ej: example@gmail.com)"
         value={usuario}
         onChangeText={setUsuario}
         style={styles.input}
