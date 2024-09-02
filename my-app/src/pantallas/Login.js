@@ -47,14 +47,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    marginBottom: 20,
+    marginBottom: 25,
     textAlign: 'center',
   },
   input: {
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
-    marginBottom: 20,
+    marginBottom: 30,
     padding: 10,
   },
   error: {
@@ -63,9 +63,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   boton: {
-    marginBottom: 20
+    width: '70%',
+    display: 'flex',
+    justifyContent: 'center',
+    
 
-    // MIRAR ESTILOS
   },
 });
 
