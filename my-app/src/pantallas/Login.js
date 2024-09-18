@@ -18,7 +18,7 @@ const Login = ({ navigation }) => {
           password: contraseña,
         }),
       });
-
+      console.log("usuario", usuario, contraseña)
       if (response.status === 200) {
         const data = await response.json();
         const { token } = data;
