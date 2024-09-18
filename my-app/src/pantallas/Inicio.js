@@ -68,7 +68,7 @@ const Inicio = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
   scrollViewContainer: {
-    flexGrow: 1,  // Permite que el contenido se expanda y haga scroll
+    flexGrow: 1,  
     padding: 20,
     backgroundColor: '#f5f5f5',
   },
