@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Button } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Button, ActivityIndicator } from 'react-native';
 
-const Inicio = ({ route }) => {
+const Inicio = ({ route, navigation }) => {
   const { nombre, apellido } = route.params;
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,7 +18,7 @@ const Inicio = ({ route }) => {
 
         if (response.status === 200) {
           const data = await response.json();
-          
+
           const uniqueEvents = data.reduce((acc, current) => {
             const x = acc.find(item => item.name === current.name);
             if (!x) {
@@ -30,11 +30,9 @@ const Inicio = ({ route }) => {
 
           setEvents(uniqueEvents); 
         }
-      } 
-      catch (error) {
+      } catch (error) {
         console.error('Error fetching data:', error);
-      } 
-      finally {
+      } finally {
         setLoading(false);
       }
     };
@@ -44,38 +42,74 @@ const Inicio = ({ route }) => {
 
   if (loading) {
     return (
-      <View>
-        <Text>Loading...</Text>
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color="#0000ff" />
       </View>
     );
   }
 
   return (
-    <View>
-       <Text style={styles.title}>Bienvenido {nombre} {apellido}</Text>
-    <FlatList
-      data={events}
-      renderItem={({ item }) => (
-        <View>
-          <Text>Name: {item.name}</Text>
-          <Text>Description: {item.description}</Text>
-        </View>
-      )}
-    />
+    <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+      <Text style={styles.title}>Bienvenido {nombre} {apellido}</Text>
 
-    <Button title="Registrarse" onPress={() => navigation.navigate('Registro')} />
-  </View>
+      {events.map((item, index) => (
+        <View key={index} style={styles.eventContainer}>
+          <Text style={styles.eventName}>Name: {item.name}</Text>
+          <Text style={styles.eventDescription}>Description: {item.description}</Text>
+        </View>
+      ))}
+
+      <View style={styles.buttonContainer}>
+        <Button title="Registrarse" onPress={() => navigation.navigate('Registro')} />
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  scrollViewContainer: {
+    flexGrow: 1,  // Permite que el contenido se expanda y haga scroll
     padding: 20,
+    backgroundColor: '#f5f5f5',
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
+    fontWeight: 'bold',
     textAlign: 'center',
+    marginVertical: 20,
+    color: '#333',
+  },
+  eventContainer: {
+    backgroundColor: '#fff',
+    padding: 15,
+    marginBottom: 15,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  eventName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+    marginBottom: 5,
+  },
+  eventDescription: {
+    fontSize: 16,
+    color: '#666',
+  },
+  buttonContainer: {
+    marginTop: 20,
+    marginBottom: 40,
+    alignSelf: 'center',
+    width: '80%',
+  },
+  loader: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
