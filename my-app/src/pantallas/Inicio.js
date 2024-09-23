@@ -52,6 +52,10 @@ const Inicio = ({ route, navigation }) => {
     <ScrollView contentContainerStyle={styles.scrollViewContainer}>
       <Text style={styles.title}>Bienvenido {nombre} {apellido}</Text>
 
+      <View style={styles.buttonContainer}>
+        <Button title="+" onPress={() => navigation.navigate('NuevoEvento')} />
+      </View>
+
       {events.map((item, index) => (
         <View key={index} style={styles.eventContainer}>
           <Text style={styles.eventName}>Name: {item.name}</Text>
@@ -59,18 +63,16 @@ const Inicio = ({ route, navigation }) => {
         </View>
       ))}
 
-      <View style={styles.buttonContainer}>
-        <Button title="Registrarse" onPress={() => navigation.navigate('Registro')} />
-      </View>
+
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   scrollViewContainer: {
-    flexGrow: 1,  
     padding: 20,
     backgroundColor: '#f5f5f5',
+    height: '100vh', 
   },
   title: {
     fontSize: 28,

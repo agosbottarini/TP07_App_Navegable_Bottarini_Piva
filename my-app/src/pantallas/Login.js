@@ -25,6 +25,7 @@ const Login = ({ navigation }) => {
 
 
         navigation.navigate('Inicio', { nombre: usuario });
+        // navigation.navigate('NuevoEvento', { token: token }); Mandarle el token pantalla por pantalla
       } else {
         setError('Usuario o contraseña incorrectos');
       }
