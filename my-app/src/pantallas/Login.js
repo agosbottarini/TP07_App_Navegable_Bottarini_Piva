@@ -18,14 +18,12 @@ const Login = ({ navigation }) => {
           password: contraseña,
         }),
       });
-      console.log("usuario", usuario, contraseña)
       if (response.status === 200) {
         const data = await response.json();
         const { token } = data;
 
 
-        navigation.navigate('Inicio', { nombre: usuario });
-        // navigation.navigate('NuevoEvento', { token: token }); Mandarle el token pantalla por pantalla
+        navigation.navigate('Inicio', { nombre: usuario, token: token });
       } else {
         setError('Usuario o contraseña incorrectos');
       }

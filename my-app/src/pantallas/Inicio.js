@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Button, ActivityIndicator } from 'react-native';
 
 const Inicio = ({ route, navigation }) => {
-  const { nombre, apellido } = route.params;
+  const { nombre, apellido, token } = route.params;
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -53,13 +53,13 @@ const Inicio = ({ route, navigation }) => {
       <Text style={styles.title}>Bienvenido {nombre} {apellido}</Text>
 
       <View style={styles.buttonContainer}>
-        <Button title="+" onPress={() => navigation.navigate('NuevoEvento')} />
+        <Button title="+" onPress={() => navigation.navigate('NuevoEvento', {token: token})} />
       </View>
 
       {events.map((item, index) => (
         <View key={index} style={styles.eventContainer}>
-          <Text style={styles.eventName}>Name: {item.name}</Text>
-          <Text style={styles.eventDescription}>Description: {item.description}</Text>
+          <Text style={styles.eventName}>Nombre: {item.name}</Text>
+          <Text style={styles.eventDescription}>Descripcion: {item.description}</Text>
         </View>
       ))}
 
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   scrollViewContainer: {
     padding: 20,
     backgroundColor: '#f5f5f5',
-    height: '100vh', 
+    height: '100vh',
   },
   title: {
     fontSize: 28,
