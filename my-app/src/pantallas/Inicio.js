@@ -19,7 +19,9 @@ const Inicio = ({ route, navigation }) => {
         if (response.status === 200) {
           const data = await response.json();
 
-          setEvents(data); 
+          
+          const eventosFuturos = data.filter(evento => new Date(evento.start_date) > new Date());
+          setEvents(eventosFuturos);
         }
         
       } catch (error) {

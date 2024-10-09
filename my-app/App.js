@@ -5,6 +5,7 @@ import Login from './src/pantallas/Login';
 import Registro from './src/pantallas/Registro';
 import Inicio from './src/pantallas/Inicio';
 import NuevoEvento from './src/pantallas/NuevoEvento';
+import Inscripcion from './src/pantallas/Inscripcion';
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,7 @@ export default function App() {
         <Stack.Screen name="Registro" component={Registro} />
         <Stack.Screen name="Inicio" component={Inicio} />
         <Stack.Screen name="NuevoEvento" component={NuevoEvento} />
+        <Stack.Screen name="Inscripcion" component={Inscripcion} />
       </Stack.Navigator>
     </NavigationContainer>
   );
