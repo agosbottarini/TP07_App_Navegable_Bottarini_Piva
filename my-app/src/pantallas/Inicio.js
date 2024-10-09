@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, ScrollView, Button, ActivityIndicator } from 'r
 const Inicio = ({ route, navigation }) => {
   const { nombre, apellido, token } = route.params;
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,38 +19,21 @@ const Inicio = ({ route, navigation }) => {
         if (response.status === 200) {
           const data = await response.json();
 
-          const uniqueEvents = data.reduce((acc, current) => {
-            const x = acc.find(item => item.name === current.name);
-            if (!x) {
-              return acc.concat([current]);
-            } else {
-              return acc;
-            }
-          }, []);
-
-          setEvents(uniqueEvents); 
+          setEvents(data); 
         }
+        
       } catch (error) {
         console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
+      } 
     };
 
     fetchData();
   }, []);
 
-  if (loading) {
-    return (
-      <View style={styles.loader}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
 
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-      <Text style={styles.title}>Bienvenido {nombre} {apellido}</Text>
+      <Text style={styles.title}>Bienvenido/a {nombre} {apellido}</Text>
 
       <View style={styles.buttonContainer}>
         <Button title="+" onPress={() => navigation.navigate('NuevoEvento', {token: token})} />
@@ -72,7 +55,8 @@ const styles = StyleSheet.create({
   scrollViewContainer: {
     padding: 20,
     backgroundColor: '#f5f5f5',
-    height: '100vh',
+    height: '100vw',
+    marginEnd: '1vw',
   },
   title: {
     fontSize: 28,

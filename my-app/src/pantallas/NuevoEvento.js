@@ -72,14 +72,14 @@ const NuevoEvento = ({ route, navigation }) => {
     const eventData = {
       name,
       description,
-      id_event_category: parseInt(idEventCategory, 10),
-      id_event_location: parseInt(idEventLocation, 10),
+      id_event_category: parseInt(idEventCategory),
+      id_event_location: parseInt(idEventLocation),
       start_date: startDate,
-      duration_in_minutes: parseInt(duration, 10),
-      price: parseInt(price, 10),
+      duration_in_minutes: parseInt(duration),
+      price: parseInt(price),
       enabled_for_enrollment: enabledForEnrollment ? 1 : 0,
-      max_assistance: parseInt(maxAssistance, 10),
-      id_creator_user: parseInt(idCreatorUser, 10),
+      max_assistance: parseInt(maxAssistance),
+      id_creator_user: parseInt(idCreatorUser),
     };
 
     try {

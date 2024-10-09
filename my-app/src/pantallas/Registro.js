@@ -24,17 +24,11 @@ const Registro = ({ navigation }) => {
         });
 
         if (response.status === 201) {
-          Alert.alert('Registro exitoso', 'Ahora puedes iniciar sesión');
           navigation.navigate('Login');
-        } else {
-          Alert.alert('Error', 'No se pudo completar el registro. Inténtalo nuevamente.');
         }
       } catch (error) {
         console.error('Error en el registro:', error);
-        Alert.alert('Error', 'Ocurrió un error al registrar el usuario.');
       }
-    } else {
-      Alert.alert('Campos incompletos', 'Por favor, completa todos los campos');
     }
   };
 
