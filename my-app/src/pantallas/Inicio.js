@@ -15,23 +15,43 @@ const Inicio = ({ route, navigation }) => {
           },
         });
 
-        if (response.status === 200) {
+        if (response.status === 200) 
+        {
           const data = await response.json();
-          
-          const eventosFuturos = data.filter(evento => new Date(evento.start_date) > new Date());
+
+          const eventosFuturos = await Promise.all(data
+            .filter(evento => new Date(evento.start_date) > new Date())
+            .map(async (evento) => 
+              {
+                const enrollmentResponse = await fetch(`http://localhost:3000/api/event/${evento.id}/enrollment/participants`, {
+                  method: 'GET',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                });
+
+                if (enrollmentResponse.status === 200) {
+                  const participants = await enrollmentResponse.json();
+                  evento.participantes = participants.length; 
+                } else {
+                  evento.participantes = 0;
+                }
+
+                return evento;
+              })
+          );
+
           setEvents(eventosFuturos);
         }
-        
       } catch (error) {
-        console.error('Error fetching data:', error);
-      } 
+        console.error('Error', error);
+      }
     };
 
     fetchData();
   }, []);
 
   const handleEventPress = (evento) => {
-
     navigation.navigate('Inscripcion', { evento, token });
   };
 
@@ -46,7 +66,12 @@ const Inicio = ({ route, navigation }) => {
       {events.map((item, index) => (
         <TouchableOpacity key={index} style={styles.eventContainer} onPress={() => handleEventPress(item)}>
           <Text style={styles.eventName}>Nombre: {item.name}</Text>
-          <Text style={styles.eventDescription}>Descripcion: {item.description}</Text>
+          <Text style={styles.eventDescription}>Descripción: {item.description}</Text>
+          <Text style={styles.eventDescription}>Participantes: {item.participantes} / {item.max_assistance}</Text>
+          
+          {item.participantes >= item.max_assistance && (
+            <Text style={styles.eventFull}>Lugares llenos</Text>
+          )}
         </TouchableOpacity>
       ))}
 
@@ -88,6 +113,11 @@ const styles = StyleSheet.create({
   eventDescription: {
     fontSize: 16,
     color: '#666',
+  },
+  eventFull: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'red',
   },
   buttonContainer: {
     marginTop: 20,

@@ -1,10 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button, Alert } from 'react-native';
 
 const Inscripcion = ({ route }) => {
   const event = route.params.evento;
   const token = route.params.token;
   const [loading, setLoading] = useState(false);
+  const [inscriptionFull, setInscriptionFull] = useState(false); 
+
+  useEffect(() => {
+    const checkEventCapacity = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/event/${event.id}/enrollment`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.status === 200) {
+          const participants = await response.json();
+          if (participants.length >= event.max_assistance) {
+            setInscriptionFull(true); 
+          }
+        }
+      } catch (error) {
+        console.error('Error obteniendo la capacidad del evento:', error);
+      }
+    };
+
+    checkEventCapacity();
+  }, [event.id, event.max_assistance]);
 
   const handleInscripcion = async () => {
     setLoading(true);  
@@ -13,7 +38,7 @@ const Inscripcion = ({ route }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,  // Pasamos el token en la cabecera si es necesario
+          'Authorization': `Bearer ${token}`,  
         },
       });
 
@@ -27,7 +52,7 @@ const Inscripcion = ({ route }) => {
       console.error('Error inscribiéndose al evento:', error);
       Alert.alert('Error', 'Ocurrió un error al intentar inscribirse');
     } finally {
-      setLoading(false);  // Detenemos el indicador de carga
+      setLoading(false); 
     }
   };
 
@@ -44,14 +69,20 @@ const Inscripcion = ({ route }) => {
         <Text style={styles.label}>Asistencia Máxima: <Text style={styles.value}>{event.max_assistance}</Text></Text>
       </View>
 
-      {/* Botón para inscribirse al evento */}
-      <View style={styles.buttonContainer}>
-        <Button 
-          title={loading ? "Cargando..." : "Inscribirse"} 
-          onPress={handleInscripcion} 
-          disabled={loading}  // Deshabilita el botón mientras carga
-        />
-      </View>
+
+      {!inscriptionFull && (
+        <View style={styles.buttonContainer}>
+          <Button 
+            title={loading ? "Cargando..." : "Inscribirse"} 
+            onPress={handleInscripcion} 
+            disabled={loading}  
+          />
+        </View>
+      )}
+
+      {inscriptionFull && (
+        <Text style={styles.fullText}>Este evento ya no tiene más lugares disponibles.</Text>
+      )}
     </View>
   );
 };
@@ -93,6 +124,12 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: 20,
     alignItems: 'center',
+  },
+  fullText: {
+    fontSize: 18,
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
 
