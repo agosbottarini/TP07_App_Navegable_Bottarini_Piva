@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button, Alert } from 'react-native';
 
-const Inscripcion = ({ route }) => {
+const Inscripcion = ({ route, navigation }) => {
   const event = route.params.evento;
   const token = route.params.token;
+  const usuario = route.params.nombre;
   const [loading, setLoading] = useState(false);
   const [inscriptionFull, setInscriptionFull] = useState(false); 
 
   useEffect(() => {
     const checkEventCapacity = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/event/${event.id}/enrollment`, {
+        const response = await fetch(`http://localhost:3000/api/event/${event.id}/enrollment/participants`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -19,6 +20,7 @@ const Inscripcion = ({ route }) => {
 
         if (response.status === 200) {
           const participants = await response.json();
+          console.log(participants)
           if (participants.length >= event.max_assistance) {
             setInscriptionFull(true); 
           }
@@ -44,7 +46,9 @@ const Inscripcion = ({ route }) => {
 
       if (response.status === 200) {
         const data = await response.json();
+        navigation.navigate('Inicio', { nombre: usuario, token: token });
         Alert.alert('Éxito', 'Te has inscrito correctamente al evento');
+        
       } else {
         Alert.alert('Error', 'No se pudo completar la inscripción');
       }

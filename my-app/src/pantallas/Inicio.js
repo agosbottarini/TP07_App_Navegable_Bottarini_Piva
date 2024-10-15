@@ -1,55 +1,59 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, Button, TouchableOpacity } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Inicio = ({ route, navigation }) => {
   const { nombre, apellido, token } = route.params;
   const [events, setEvents] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/api/event/', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+  const fetchData = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/event/', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-        if (response.status === 200) 
-        {
-          const data = await response.json();
+      if (response.status === 200) {
+        const data = await response.json();
 
-          const eventosFuturos = await Promise.all(data
-            .filter(evento => new Date(evento.start_date) > new Date())
-            .map(async (evento) => 
-              {
-                const enrollmentResponse = await fetch(`http://localhost:3000/api/event/${evento.id}/enrollment/participants`, {
-                  method: 'GET',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                });
+        const eventosFuturos = await Promise.all(
+          data
+            .filter((evento) => new Date(evento.start_date) > new Date())
+            .map(async (evento) => {
+              const enrollmentResponse = await fetch(`http://localhost:3000/api/event/${evento.id}/enrollment/participants`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              });
 
-                if (enrollmentResponse.status === 200) {
-                  const participants = await enrollmentResponse.json();
-                  evento.participantes = participants.length; 
-                } else {
-                  evento.participantes = 0;
-                }
+              if (enrollmentResponse.status === 200) {
+                const participants = await enrollmentResponse.json();
+                evento.participantes = participants.length;
+              } else {
+                evento.participantes = 0;
+              }
 
-                return evento;
-              })
-          );
+              return evento;
+            })
+        );
 
-          setEvents(eventosFuturos);
-        }
-      } catch (error) {
-        console.error('Error', error);
+        setEvents(eventosFuturos);
       }
-    };
+    } catch (error) {
+      console.error('Error', error);
+    }
+  };
 
-    fetchData();
-  }, []);
+  // Hace que se refresque la pagina cada vez que se vuelva a ella 
+  //(se actualizan los participantes de los eventos sin actualizar la pagina)
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [])
+  );
 
   const handleEventPress = (evento) => {
     navigation.navigate('Inscripcion', { evento, token });

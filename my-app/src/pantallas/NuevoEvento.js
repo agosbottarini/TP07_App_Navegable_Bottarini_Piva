@@ -94,6 +94,8 @@ const NuevoEvento = ({ route, navigation }) => {
 
       if (response.status === 201) {
         setIsSuccessModalVisible(true);
+      } else if (response.status === 408) {
+        console.log("Error, superaste la cantidad máxima de participantes");
       } else {
         Alert.alert('Error', 'Hubo un error al crear el evento');
       }
@@ -143,6 +145,12 @@ const NuevoEvento = ({ route, navigation }) => {
         ))}
       </Picker>
 
+      {idEventLocation ? (
+        <Text style={styles.locationInfo}>
+          {`Ubicación seleccionada: ${locations.find(loc => loc.id == idEventLocation)?.name}, Capacidad máxima: ${locations.find(loc => loc.id == idEventLocation)?.max_capacity} personas`}
+        </Text>
+      ) : null}
+
       <TextInput
         style={styles.input}
         placeholder="Fecha de inicio (YYYY-MM-DD)"
@@ -170,6 +178,7 @@ const NuevoEvento = ({ route, navigation }) => {
           onValueChange={setEnabledForEnrollment}
         />
       </View>
+
       <TextInput
         style={styles.input}
         placeholder="Asistencia máxima"
@@ -177,6 +186,7 @@ const NuevoEvento = ({ route, navigation }) => {
         onChangeText={setMaxAssistance}
         keyboardType="numeric"
       />
+      
       <TextInput
         style={styles.input}
         placeholder="ID del creador"
@@ -257,17 +267,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ced4da',
     borderRadius: 5,
+    backgroundColor: '#fff',
     marginBottom: 20,
   },
   label: {
-    marginBottom: 5,
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#343a40',
+    marginBottom: 10,
+    color: '#495057',
+  },
+  locationInfo: {
+    fontSize: 14,
+    color: '#6c757d',
+    marginBottom: 20,
   },
   switchContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
   },
@@ -278,22 +292,22 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     padding: 20,
     borderRadius: 10,
     width: '80%',
     alignItems: 'center',
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 15,
+    marginBottom: 20,
   },
   modalButtons: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
+    justifyContent: 'space-between',
     width: '100%',
+    marginTop: 20,
   },
 });
 
