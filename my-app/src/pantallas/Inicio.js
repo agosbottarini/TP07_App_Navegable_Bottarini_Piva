@@ -67,6 +67,7 @@ const Inicio = ({ route, navigation }) => {
         <Button title="+" onPress={() => navigation.navigate('NuevoEvento', { token: token })} />
       </View>
 
+
       {events.map((item, index) => (
         <TouchableOpacity key={index} style={styles.eventContainer} onPress={() => handleEventPress(item)}>
           <Text style={styles.eventName}>Nombre: {item.name}</Text>
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
     alignSelf: 'center',
     width: '80%',
-  },
+  },  
 });
 
 export default Inicio;

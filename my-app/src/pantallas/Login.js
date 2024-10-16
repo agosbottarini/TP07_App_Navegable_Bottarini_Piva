@@ -1,3 +1,5 @@
+// FALTA CORREGIR LOS BOTONES ADMINISTRAR E INICIO, QUE TE LLEVEN A DONDE TE TIENEN QUE LLEVAR
+
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 
@@ -5,8 +7,9 @@ const Login = ({ navigation }) => {
   const [usuario, setUsuario] = useState('');
   const [contraseña, setContraseña] = useState('');
   const [error, setError] = useState('');
+  const [login, setLogin] = useState(true);
 
-  const handleLogin = async () => {
+  const handleEntrar = async () => {
     try {
       const response = await fetch('http://localhost:3000/api/user/login', { 
         method: 'POST',
@@ -18,12 +21,17 @@ const Login = ({ navigation }) => {
           password: contraseña,
         }),
       });
+
       if (response.status === 200) {
         const data = await response.json();
         const { token } = data;
 
+        if (login) {
+          navigation.navigate('Inicio', { nombre: usuario, token: token });
+        } else {
+          navigation.navigate('Administrador', { nombre: usuario, token: token });
+        }
 
-        navigation.navigate('Inicio', { nombre: usuario, token: token });
       } else {
         setError('Usuario o contraseña incorrectos');
       }
@@ -31,6 +39,16 @@ const Login = ({ navigation }) => {
       console.error('Error en el login:', error);
       setError('Ocurrió un error al iniciar sesión.');
     }
+  };
+
+  const handleLogin = async () => {
+    await setLogin(true); 
+    handleEntrar();       
+  };
+
+  const handleAdmin = async () => {
+    await setLogin(false); 
+    handleEntrar();        
   };
 
   return (
@@ -50,8 +68,17 @@ const Login = ({ navigation }) => {
         style={styles.input}
       />
       {error ? <Text style={styles.error}>{error}</Text> : null}
-      <Button title="Iniciar sesión" onPress={handleLogin} />
-      <Button title="Registrarse" onPress={() => navigation.navigate('Registro')} />
+      <View style={styles.boton}>
+        <Button title="Iniciar sesión" onPress={handleLogin} />
+      </View>
+
+      <View style={styles.buttonContainer2}>
+        <Button title="Registrarse" onPress={() => navigation.navigate('Registro')} />
+      </View>
+
+      <View style={styles.boton}>
+        <Button title="Administrar" onPress={handleAdmin} />
+      </View>
     </View>
   );
 };
@@ -71,13 +98,17 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
-    marginBottom: 30,
+    marginBottom: 10,
     padding: 10,
   },
   error: {
     color: 'red',
     marginBottom: 20,
     textAlign: 'center',
+  },
+  boton: {
+    marginTop: 35,
+    marginBottom: 10,
   },
 });
 
