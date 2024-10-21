@@ -4,91 +4,123 @@ import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 const EditarEvento = ({ route, navigation }) => {
   const { evento, token } = route.params;
   const [name, setName] = useState(evento.name);
-  const [startDate, setStartDate] = useState(evento.start_date);
   const [description, setDescription] = useState(evento.description);
-  const [price, setPrice] = useState(evento.price.toString());
-  const [maxAssistance, setMaxAssistance] = useState(evento.max_assistance.toString());
+  const [startDate, setStartDate] = useState(evento.start_date.slice(0, 10)); 
+  const [duration, setDuration] = useState(evento.duration_in_minutes);
+  const [price, setPrice] = useState(evento.price);
+  const [maxAssistance, setMaxAssistance] = useState(evento.max_assistance);
 
   const handleSave = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/event/`, {
+      const response = await fetch(`http://localhost:3000/api/event`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
+          id: evento.id, 
           name,
-          start_date: startDate,
           description,
-          price: parseFloat(price),
-          max_assistance: parseInt(maxAssistance),
+          start_date: startDate,
+          duration_in_minutes: duration,
+          price,
+          max_assistance: maxAssistance,
+          enabled_for_enrollment: evento.enabled_for_enrollment,
+          id_event_category: evento.id_event_category,
+          id_event_location: evento.id_event_location,
+          id_creator_user: evento.id_creator_user,
         }),
       });
 
       if (response.status === 200) {
-        Alert.alert('Éxito', 'El evento ha sido actualizado correctamente');
-        navigation.goBack(); 
-        Alert.alert('Error', 'No se pudo actualizar el evento');
+        Alert.alert('Éxito', 'Evento actualizado correctamente.');
+        navigation.navigate('EdicionEventos', { token: token });
+      } else {
+        Alert.alert('Error', 'Hubo un problema al actualizar el evento.');
       }
     } catch (error) {
-      console.error('Error al actualizar el evento:', error);
-      Alert.alert('Error', 'Ocurrió un error al actualizar el evento');
+      console.error(error);
+      Alert.alert('Error', 'No se pudo actualizar el evento.');
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      // Verifica si existen inscripciones asociadas al evento
+      console.log(evento)
+      const getEnrollmentsResponse = await fetch(`http://localhost:3000/api/event/${evento.id}/enrollment`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (getEnrollmentsResponse.status === 200) {
+        const enrollments = await getEnrollmentsResponse.json();
+        if (enrollments.length > 0) {
+          // Si hay inscripciones, eliminarlas primero
+          const deleteEnrollmentsResponse = await fetch(`http://localhost:3000/api/event/${evento.id}/enrollment`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (deleteEnrollmentsResponse.status !== 200) {
+            Alert.alert('Error', 'Hubo un problema al eliminar las inscripciones.');
+            return;
+          }
+        }
+      } else if (getEnrollmentsResponse.status !== 404) {
+        Alert.alert('Error', 'Hubo un problema al verificar las inscripciones.');
+        return;
+      }
+
+      // Si no hay inscripciones o ya fueron eliminadas, eliminar el evento
+      const deleteEventResponse = await fetch(`http://localhost:3000/api/event/${evento.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (deleteEventResponse.status === 200) {
+        Alert.alert('Éxito', 'Evento eliminado correctamente.');
+        navigation.navigate('EdicionEventos', { token: token });
+      } else {
+        Alert.alert('Error', 'Hubo un problema al eliminar el evento.');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'No se pudo eliminar el evento o las inscripciones.');
     }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Editar Evento</Text>
-
-      <Text style={styles.label}>Nombre del evento</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Nombre del evento"
-        value={name}
-        onChangeText={setName}
-      />
-
-      <Text style={styles.label}>Fecha de inicio</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Fecha de inicio (YYYY-MM-DD)"
-        value={startDate}
-        onChangeText={setStartDate}
-      />
-
-      <Text style={styles.label}>Descripción</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Descripción"
-        value={description}
-        onChangeText={setDescription}
-      />
-
-      <Text style={styles.label}>Precio</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Precio"
-        keyboardType="numeric"
-        value={price}
-        onChangeText={setPrice}
-      />
-
-      <Text style={styles.label}>Capacidad máxima</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Capacidad máxima"
-        keyboardType="numeric"
-        value={maxAssistance}
-        onChangeText={setMaxAssistance}
-      />
+      <Text>Título</Text>
+      <TextInput value={name} onChangeText={setName} style={styles.input} />
+      <Text>Descripción</Text>
+      <TextInput value={description} onChangeText={setDescription} style={styles.input} />
+      <Text>Fecha de Inicio</Text>
+      <TextInput value={startDate} onChangeText={setStartDate} style={styles.input} />
+      <Text>Duración en Minutos</Text>
+      <TextInput value={duration} onChangeText={setDuration} style={styles.input} keyboardType="numeric" />
+      <Text>Precio</Text>
+      <TextInput value={price} onChangeText={setPrice} style={styles.input} keyboardType="numeric" />
+      <Text>Máxima Asistencia</Text>
+      <TextInput value={maxAssistance} onChangeText={setMaxAssistance} style={styles.input} keyboardType="numeric" />
 
       <View style={styles.buttonContainer}>
         <Button title="Guardar cambios" onPress={handleSave} />
       </View>
-
+      
       <View style={styles.buttonContainer}>
-        <Button title="Cancelar" onPress={() => navigation.goBack()} />
+        <Button title="Eliminar evento" onPress={handleDelete} color="red" />
       </View>
     </View>
   );
@@ -97,32 +129,24 @@ const EditarEvento = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
   },
   title: {
     fontSize: 24,
-    marginBottom: 20,
+    fontWeight: 'bold',
     textAlign: 'center',
-    color: '#333',
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: '#666',
+    marginBottom: 20,
   },
   input: {
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
-    marginBottom: 15,
+    marginBottom: 10,
     padding: 10,
-    borderRadius: 5,
-    backgroundColor: '#fff',
   },
   buttonContainer: {
-    marginBottom: 15,
+    marginVertical: 10,
   },
 });
 
