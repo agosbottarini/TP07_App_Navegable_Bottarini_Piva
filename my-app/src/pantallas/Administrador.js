@@ -1,14 +1,15 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 
-const Administrador = ({ navigation }) => {
+const Administrador = ({route, navigation }) => {
+  const { nombre, apellido, token } = route.params;
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity 
         style={styles.card} 
-        onPress={() => navigation.navigate('EdicionEventos')}
+        onPress={() => navigation.navigate('EdicionEventos', { nombre: nombre, token: token })}
       >
-        <Text style={styles.cardTitle}>Edición de Eventos</Text>
+        <Text style={styles.cardTitle}>Eventos Disponibles</Text>
         <Text style={styles.cardDescription}>
           Administra y edita los detalles de los eventos existentes.
         </Text>
@@ -16,11 +17,11 @@ const Administrador = ({ navigation }) => {
 
       <TouchableOpacity 
         style={styles.card} 
-        onPress={() => navigation.navigate('EdicionParticipantes')}
+        onPress={() => navigation.navigate('EventosHistoricos')}
       >
-        <Text style={styles.cardTitle}>Edición de Participantes</Text>
+        <Text style={styles.cardTitle}>Eventos Historicos</Text>
         <Text style={styles.cardDescription}>
-          Gestiona la lista de participantes para cada evento.
+          Gestiona la lista de eventos pasados.
         </Text>
       </TouchableOpacity>
     </ScrollView>

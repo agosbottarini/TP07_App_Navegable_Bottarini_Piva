@@ -7,6 +7,9 @@ import Inicio from './src/pantallas/Inicio';
 import NuevoEvento from './src/pantallas/NuevoEvento';
 import Inscripcion from './src/pantallas/Inscripcion';
 import Administrador from './src/pantallas/Administrador';
+import EdicionEventos from './src/pantallas/EdicionEventos';
+import EventosHistoricos from './src/pantallas/EventosHistoricos';
+import EditarEvento from './src/pantallas/EditarEvento';
 
 const Stack = createStackNavigator();
 
@@ -20,9 +23,13 @@ export default function App() {
         <Stack.Screen name="NuevoEvento" component={NuevoEvento} />
         <Stack.Screen name="Inscripcion" component={Inscripcion} />
         <Stack.Screen name="Administrador" component={Administrador} />
+        <Stack.Screen name="EdicionEventos" component={EdicionEventos} />
+        <Stack.Screen name="EventosHistoricos" component={EventosHistoricos} />
+        <Stack.Screen name="EditarEvento" component={EditarEvento} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
+
 
 

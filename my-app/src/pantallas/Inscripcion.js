@@ -1,3 +1,4 @@
+//Arreglar el scrollview
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button, Alert } from 'react-native';
 
@@ -61,6 +62,7 @@ const Inscripcion = ({ route, navigation }) => {
   };
 
   return (
+    <ScrollView contentContainerStyle={styles.scrollViewContainer}>
     <View style={styles.container}>
       <Text style={styles.title}>Inscripción al Evento</Text>
 
@@ -88,10 +90,17 @@ const Inscripcion = ({ route, navigation }) => {
         <Text style={styles.fullText}>Este evento ya no tiene más lugares disponibles.</Text>
       )}
     </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  scrollViewContainer: {
+    padding: 20,
+    backgroundColor: '#f5f5f5',
+    height: '100vw',
+    marginEnd: '1vw',
+  },
   container: {
     flex: 1,
     padding: 20,
