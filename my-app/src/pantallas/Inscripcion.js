@@ -1,6 +1,5 @@
-//Arreglar el scrollview
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Alert } from 'react-native';
+import { View, Text, StyleSheet, Button, Alert, ScrollView } from 'react-native';
 
 const Inscripcion = ({ route, navigation }) => {
   const event = route.params.evento;

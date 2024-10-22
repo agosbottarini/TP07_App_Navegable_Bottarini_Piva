@@ -47,38 +47,6 @@ const EditarEvento = ({ route, navigation }) => {
 
   const handleDelete = async () => {
     try {
-      // Verifica si existen inscripciones asociadas al evento
-      console.log(evento)
-      const getEnrollmentsResponse = await fetch(`http://localhost:3000/api/event/${evento.id}/enrollment`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (getEnrollmentsResponse.status === 200) {
-        const enrollments = await getEnrollmentsResponse.json();
-        if (enrollments.length > 0) {
-          // Si hay inscripciones, eliminarlas primero
-          const deleteEnrollmentsResponse = await fetch(`http://localhost:3000/api/event/${evento.id}/enrollment`, {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          if (deleteEnrollmentsResponse.status !== 200) {
-            Alert.alert('Error', 'Hubo un problema al eliminar las inscripciones.');
-            return;
-          }
-        }
-      } else if (getEnrollmentsResponse.status !== 404) {
-        Alert.alert('Error', 'Hubo un problema al verificar las inscripciones.');
-        return;
-      }
-
-      // Si no hay inscripciones o ya fueron eliminadas, eliminar el evento
       const deleteEventResponse = await fetch(`http://localhost:3000/api/event/${evento.id}`, {
         method: 'DELETE',
         headers: {
@@ -95,7 +63,7 @@ const EditarEvento = ({ route, navigation }) => {
       }
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'No se pudo eliminar el evento o las inscripciones.');
+      Alert.alert('Error', 'No se pudo eliminar el evento.');
     }
   };
 

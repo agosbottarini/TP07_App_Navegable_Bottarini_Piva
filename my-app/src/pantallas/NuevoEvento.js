@@ -1,3 +1,4 @@
+//Arreglar el scrollview
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, Picker, Switch, ScrollView, StyleSheet, Alert, Modal } from 'react-native';
 
