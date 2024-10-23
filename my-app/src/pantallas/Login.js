@@ -26,7 +26,7 @@ const Login = ({ navigation }) => {
         if (isAdmin) {
           navigation.navigate('Administrador', { nombre: usuario, token: token });
         } else {
-          navigation.navigate('Inicio', { nombre: usuario, token: token });
+          navigation.navigate('Inicio', { nombre: usuario, token: token});
         }
 
       } else {

@@ -1,13 +1,12 @@
-//Corregir el id_creator_user
-
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, Picker, Switch, ScrollView, StyleSheet, Alert, Modal } from 'react-native';
 
 const NuevoEvento = ({ route, navigation }) => {
-  const { token, id_creator_user } = route.params; 
+  const { token, nombre} = route.params; 
   const [categories, setCategories] = useState([]);
   const [locations, setLocations] = useState([]);
   const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [description, setDescription] = useState('');
   const [idEventCategory, setIdEventCategory] = useState('');
   const [idEventLocation, setIdEventLocation] = useState('');
@@ -19,6 +18,7 @@ const NuevoEvento = ({ route, navigation }) => {
 
   const [isSummaryModalVisible, setIsSummaryModalVisible] = useState(false);
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
+
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -58,6 +58,26 @@ const NuevoEvento = ({ route, navigation }) => {
       }
     };
 
+    const fetchUsername = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/user/${nombre}/user`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.status === 200) {
+          const data = await response.json();
+          console.log(data)
+          setUsername(data[0]);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchUsername();
     fetchLocations();
     fetchCategories();
   }, [token]);
@@ -68,6 +88,7 @@ const NuevoEvento = ({ route, navigation }) => {
     }
     return true;
   };
+
 
   const handleCreateEvent = async () => {
     const eventData = {
@@ -80,7 +101,7 @@ const NuevoEvento = ({ route, navigation }) => {
       price: parseInt(price),
       enabled_for_enrollment: enabledForEnrollment ? 1 : 0,
       max_assistance: parseInt(maxAssistance),
-      id_creator_user: id_creator_user, 
+      id_creator_user: username.id, 
     };
 
     try {
