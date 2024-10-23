@@ -33,15 +33,13 @@ const VerParticipantes = ({ route, navigation }) => {
               });
 
               if (userResponse.status === 200) {
-                // Devolver solo el objeto del usuario
                 return await userResponse.json();
               } else {
-                return null; // Regresar null si la respuesta no es exitosa
+                return null; 
               }
             })
           );
 
-          // Filtrar y aplanar el array en un solo paso
           const cleanParticipants = participantsData.filter((p) => p !== null).flat();
           setParticipants(cleanParticipants);
         } else {
