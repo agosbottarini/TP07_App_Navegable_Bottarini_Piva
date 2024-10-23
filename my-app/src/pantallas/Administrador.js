@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 
-const Administrador = ({route, navigation }) => {
+const Administrador = ({ route, navigation }) => {
   const { nombre, apellido, token } = route.params;
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -17,7 +17,7 @@ const Administrador = ({route, navigation }) => {
 
       <TouchableOpacity 
         style={styles.card} 
-        onPress={() => navigation.navigate('EventosHistoricos')}
+        onPress={() => navigation.navigate('EventosHistoricos', { nombre: nombre, token: token })}
       >
         <Text style={styles.cardTitle}>Eventos Historicos</Text>
         <Text style={styles.cardDescription}>

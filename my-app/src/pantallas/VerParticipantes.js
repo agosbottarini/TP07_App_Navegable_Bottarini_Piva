@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, StyleSheet, Alert } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet, Alert, ScrollView } from 'react-native';
 
 const VerParticipantes = ({ route, navigation }) => {
   const { evento, token } = route.params;
@@ -9,7 +9,6 @@ const VerParticipantes = ({ route, navigation }) => {
   useEffect(() => {
     const fetchParticipants = async () => {
       try {
-        // Primera llamada: obtener los IDs de los participantes
         const response = await fetch(`http://localhost:3000/api/event/${evento.id}/enrollment/participants`, {
           method: 'GET',
           headers: {
@@ -22,7 +21,9 @@ const VerParticipantes = ({ route, navigation }) => {
           const participantIds = await response.json();
 
           const participantsData = await Promise.all(
-            participantIds.map(async (participantId) => {
+            participantIds.map(async (participantArray) => {
+              console.log(participantArray)
+              const participantId = participantArray;
               const userResponse = await fetch(`http://localhost:3000/api/user/${participantId.id_user}`, {
                 method: 'GET',
                 headers: {
@@ -30,17 +31,19 @@ const VerParticipantes = ({ route, navigation }) => {
                   Authorization: `Bearer ${token}`,
                 },
               });
-              if (userResponse.status === 200) {
 
+              if (userResponse.status === 200) {
+                // Devolver solo el objeto del usuario
                 return await userResponse.json();
               } else {
-                return null;
+                return null; // Regresar null si la respuesta no es exitosa
               }
             })
           );
-            console.log(participantsData)
-          setParticipants(participantsData.filter((participant) => participant !== null));
-          console.log(participants)
+
+          // Filtrar y aplanar el array en un solo paso
+          const cleanParticipants = participantsData.filter((p) => p !== null).flat();
+          setParticipants(cleanParticipants);
         } else {
           Alert.alert('Error', 'No se pudieron obtener los participantes.');
         }
@@ -55,29 +58,24 @@ const VerParticipantes = ({ route, navigation }) => {
     fetchParticipants();
   }, [evento.id, token]);
 
-  const renderParticipant = ({ item }) => (
-    <View style={styles.participantCard}>
-      <Text style={styles.participantName}>Nombre: {item.name}</Text>
-      <Text>Email: {item.email}</Text>
-      <Text>Teléfono: {item.phone}</Text>
-    </View>
-  );
+  console.log(participants)
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>Participantes del Evento: {evento.name}</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : participants.length > 0 ? (
-        <FlatList
-          data={participants}
-          renderItem={renderParticipant}
-          keyExtractor={(item) => item.id}
-        />
+        participants.map((item) => (
+          <View key={item.id} style={styles.participantCard}>
+            <Text style={styles.participantName}>Nombre: {item.first_name} {item.last_name}</Text>
+            <Text>Nombre de usuario: {item.username}</Text>
+          </View>
+        ))
       ) : (
         <Text style={styles.noParticipants}>No hay participantes registrados para este evento.</Text>
       )}
-    </View>
+    </ScrollView>
   );
 };
 
@@ -85,7 +83,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    justifyContent: 'center',
   },
   title: {
     fontSize: 24,
