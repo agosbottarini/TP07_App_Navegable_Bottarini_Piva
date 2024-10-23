@@ -64,7 +64,7 @@ const Inicio = ({ route, navigation }) => {
       <Text style={styles.title}>Bienvenido/a {nombre} {apellido}</Text>
 
       <View style={styles.buttonContainer}>
-        <Button title="+" onPress={() => navigation.navigate('NuevoEvento', { token: token })} />
+        <Button title="+" onPress={() => navigation.navigate('NuevoEvento', { token: token, })} />
       </View>
 
 

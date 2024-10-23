@@ -23,7 +23,6 @@ const Login = ({ navigation }) => {
         const data = await response.json();
         const { token } = data;
 
-        // Usamos el argumento isAdmin para determinar la navegación
         if (isAdmin) {
           navigation.navigate('Administrador', { nombre: usuario, token: token });
         } else {
@@ -40,11 +39,11 @@ const Login = ({ navigation }) => {
   };
 
   const handleLogin = () => {
-    handleEntrar(false);  // Indica que no es un administrador
+    handleEntrar(false); 
   };
 
   const handleAdmin = () => {
-    handleEntrar(true);   // Indica que es un administrador
+    handleEntrar(true);   
   };
 
   return (

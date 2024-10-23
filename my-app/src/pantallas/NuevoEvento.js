@@ -1,8 +1,10 @@
+//Corregir el id_creator_user
+
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, Picker, Switch, ScrollView, StyleSheet, Alert, Modal } from 'react-native';
 
 const NuevoEvento = ({ route, navigation }) => {
-  const { token } = route.params;
+  const { token, id_creator_user } = route.params; 
   const [categories, setCategories] = useState([]);
   const [locations, setLocations] = useState([]);
   const [name, setName] = useState('');
@@ -14,7 +16,6 @@ const NuevoEvento = ({ route, navigation }) => {
   const [price, setPrice] = useState('');
   const [enabledForEnrollment, setEnabledForEnrollment] = useState(false);
   const [maxAssistance, setMaxAssistance] = useState('');
-  const [idCreatorUser, setIdCreatorUser] = useState('');
 
   const [isSummaryModalVisible, setIsSummaryModalVisible] = useState(false);
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
@@ -62,7 +63,7 @@ const NuevoEvento = ({ route, navigation }) => {
   }, [token]);
 
   const validateFields = () => {
-    if (!name || !description || !idEventCategory || !idEventLocation || !startDate || !duration || !price || !maxAssistance || !idCreatorUser) {
+    if (!name || !description || !idEventCategory || !idEventLocation || !startDate || !duration || !price || !maxAssistance) {
       return false;
     }
     return true;
@@ -79,7 +80,7 @@ const NuevoEvento = ({ route, navigation }) => {
       price: parseInt(price),
       enabled_for_enrollment: enabledForEnrollment ? 1 : 0,
       max_assistance: parseInt(maxAssistance),
-      id_creator_user: parseInt(idCreatorUser),
+      id_creator_user: id_creator_user, 
     };
 
     try {
@@ -103,8 +104,6 @@ const NuevoEvento = ({ route, navigation }) => {
       console.error('Error creating event:', error);
     }
   };
-
-
 
   return (
     <ScrollView style={styles.container}>
@@ -188,14 +187,6 @@ const NuevoEvento = ({ route, navigation }) => {
         onChangeText={setMaxAssistance}
         keyboardType="numeric"
       />
-      
-      <TextInput
-        style={styles.input}
-        placeholder="ID del creador"
-        value={idCreatorUser}
-        onChangeText={setIdCreatorUser}
-        keyboardType="numeric"
-      />
 
       <Button title="Revisar Evento" onPress={() => {
         if (validateFields()) {
@@ -216,7 +207,6 @@ const NuevoEvento = ({ route, navigation }) => {
             <Text>Precio: ${price}</Text>
             <Text>Inscripción habilitada: {enabledForEnrollment ? 'Sí' : 'No'}</Text>
             <Text>Asistencia máxima: {maxAssistance}</Text>
-            <Text>ID del creador: {idCreatorUser}</Text>
 
             <View style={styles.modalButtons}>
               <Button title="Confirmar" onPress={() => {
@@ -276,42 +266,42 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
+    fontWeight: 'bold',
     marginBottom: 10,
-    color: '#495057',
-  },
-  locationInfo: {
-    fontSize: 14,
-    color: '#6c757d',
-    marginBottom: 20,
+    color: '#343a40',
   },
   switchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 20,
   },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalContent: {
     backgroundColor: '#fff',
     padding: 20,
     borderRadius: 10,
     width: '80%',
-    alignItems: 'center',
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 20,
+    textAlign: 'center',
   },
   modalButtons: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
+    justifyContent: 'space-around',
     marginTop: 20,
+  },
+  locationInfo: {
+    fontStyle: 'italic',
+    marginBottom: 20,
   },
 });
 
