@@ -1,5 +1,3 @@
-// FALTA CORREGIR LOS BOTONES ADMINISTRAR E INICIO, QUE TE LLEVEN A DONDE TE TIENEN QUE LLEVAR
-
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 
@@ -7,9 +5,8 @@ const Login = ({ navigation }) => {
   const [usuario, setUsuario] = useState('');
   const [contraseña, setContraseña] = useState('');
   const [error, setError] = useState('');
-  const [login, setLogin] = useState(true);
 
-  const handleEntrar = async () => {
+  const handleEntrar = async (isAdmin) => {
     try {
       const response = await fetch('http://localhost:3000/api/user/login', { 
         method: 'POST',
@@ -26,10 +23,11 @@ const Login = ({ navigation }) => {
         const data = await response.json();
         const { token } = data;
 
-        if (login) {
-          navigation.navigate('Inicio', { nombre: usuario, token: token });
-        } else {
+        // Usamos el argumento isAdmin para determinar la navegación
+        if (isAdmin) {
           navigation.navigate('Administrador', { nombre: usuario, token: token });
+        } else {
+          navigation.navigate('Inicio', { nombre: usuario, token: token });
         }
 
       } else {
@@ -41,14 +39,12 @@ const Login = ({ navigation }) => {
     }
   };
 
-  const handleLogin = async () => {
-    await setLogin(true); 
-    handleEntrar();       
+  const handleLogin = () => {
+    handleEntrar(false);  // Indica que no es un administrador
   };
 
-  const handleAdmin = async () => {
-    await setLogin(false); 
-    handleEntrar();        
+  const handleAdmin = () => {
+    handleEntrar(true);   // Indica que es un administrador
   };
 
   return (
@@ -112,4 +108,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default Login; 

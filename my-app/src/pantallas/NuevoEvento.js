@@ -1,4 +1,3 @@
-//Arreglar el scrollview
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, Picker, Switch, ScrollView, StyleSheet, Alert, Modal } from 'react-native';
 
@@ -104,6 +103,8 @@ const NuevoEvento = ({ route, navigation }) => {
       console.error('Error creating event:', error);
     }
   };
+
+
 
   return (
     <ScrollView style={styles.container}>
@@ -247,7 +248,9 @@ const NuevoEvento = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#f5f5f5',
+    height: '100vw',
+    marginEnd: '1vw',
   },
   title: {
     fontSize: 24,
